@@ -44,6 +44,37 @@
     .content {
       margin-top: 60px;
       margin-left: 270px;
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+
+    }
+
+    .card {
+      width: 30%;
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+
+    }
+
+    .card button {
+      width: 100%;
+      margin: 5px 0;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 7px;
+      cursor: pointer;
+    }
+
+    img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+
     }
   </style>
 
@@ -91,6 +122,103 @@
   </div>
   <div class="content" id="cardArea"></div>
 
+  <script>
+    let fleet = [];
+
+    function renderUI(data) {
+      const area = document.getElementById("cardsArea")
+      area.innterHTML = ""
+
+      data.foreach((item, index) => {
+        let card = document.createElement("div")
+        card.className = "card";
+        card.innerHTML = `
+        <img src="https://coding-platform.s3.amazonaws.com/dev/lms/tickets/5e80fcb6-3f8e-480c-945b-30a5359eb40e/JNmYjkVr3WOjsrbu.png">
+        
+       <h4> ${item.reg}</h4>
+       <p> Category:${item.ategory}</p>
+       <p> Driver: ${item.driver}</p>
+       <p> Status: ${item.available}</p>
+       <button onlick="updateDriver(${index})"> Update Driver</button>
+       <button onlick="toggleAvailability(${index})">Change Avaiability</button>
+       
+       
+       <button onlick="deletevehicle(${index})"> Delete vehicle</button>`;
+        area.appendChild(card);
+      });
+    }
+
+    function addFleet() {
+      let reg = document.getElementById("reg").value.trim();
+      let category = document.getElementById("category").value;
+      let driver = document.getElementById("driver").value.trim();
+      let available = document.getElementById("available").value;
+      if (!reg || !category || !driver) {
+        alert("All feilds are required!")
+        return;
+      }
+      fleet.push({ reg, category, driver, available });
+
+      renderUI(fleet);
+      document.getElementById("reg").value = "";
+      document.getElementById("category").value = "";
+      document.getElementById("driver").value = "";
+      document.getElementById("available").value = " Available";
+    }
+
+    function updateDriver(i) {
+      let newDriver = prompt(" enter new driver namme");
+      if (newDriver && newDriver.trim() !== "") {
+        fleet[i].driver = newDriver;
+        renderUI(fleet);
+
+      }
+      else {
+        alert("driver name an nit be empty")
+      }
+    }
+
+    function toggleAvailability(i) {
+      fleet[i].available = fleet[i].available === "Available" ? "Unavailable" :
+        " Avaialble";
+      renderUI(fleet);
+    }
+
+    funtion deletevehicle(i){
+      if (confirm("Are you sure you want to delete?")) {
+        fleet.splice(i, 1)
+        renderUI(fleet)
+      }
+
+    }
+
+    function applyFilter() {
+      let category = document.getElementById("filterCategory").value;
+      let status = document.getElementById("filterAvailable").value;
+      let filtered = fleet.filter(v => {
+        return (category == "" || v.category == category) &&
+          (status == "" || v.avaiable == status);
+      })
+      renderUI(filtered)
+
+
+
+    }
+
+    function cleanFilter() {
+      document.getElementById("filterCategory").value;
+      document.getElementById("filterAvailable").value;
+      renderUI(fleet);
+    }
+
+
+
+
+
+
+
+
+  </script>
 
 </body>
 
